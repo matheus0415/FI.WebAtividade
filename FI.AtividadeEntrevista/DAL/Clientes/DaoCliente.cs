@@ -1,4 +1,5 @@
 using FI.AtividadeEntrevista.DML;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
@@ -146,7 +147,7 @@ namespace FI.AtividadeEntrevista.DAL
                 {
                     DML.Cliente cli = new DML.Cliente();
                     cli.Id = row.Field<long>("Id");
-                    cli.CPF = row.Field<string>("CPF");
+                    cli.CPF = row.Table.Columns.Contains("CPF") ? (row["CPF"] != DBNull.Value ? row.Field<string>("CPF") : string.Empty) : string.Empty;
                     cli.CEP = row.Field<string>("CEP");
                     cli.Cidade = row.Field<string>("Cidade");
                     cli.Email = row.Field<string>("Email");

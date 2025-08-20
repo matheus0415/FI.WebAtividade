@@ -79,7 +79,14 @@
     </div>
 
     <div class="row">
-        <div class="col-lg-12">
+        <div class="col-md-6">
+            <div class="pull-left" style="margin-bottom: 15px;">
+                <button type="button" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#modalBeneficiario">
+                    Beneficiários
+                </button>
+            </div>
+        </div>
+        <div class="col-lg-6">
             <div class="pull-right">
                 <button type="submit" class="btn btn-sm btn-success">Salvar</button>
                 @Html.ActionLink("Voltar", "Index", "Cliente", new { }, new { @class = "btn btn-sm btn-danger" })
@@ -89,6 +96,8 @@
 
 
 </form>
+
+@Html.Partial("_ModalBeneficiario")
 
 <script type="text/javascript">
     // Máscara para CPF
@@ -100,20 +109,14 @@
         return cpf;
     }
 
-    // Aplica máscara no campo CPF
     document.getElementById('CPF').addEventListener('input', function(e) {
         e.target.value = mascaraCPF(e.target.value);
     });
 
-    // Remove máscara antes de enviar o formulário
     document.getElementById('formCadastro').addEventListener('submit', function(e) {
         var cpfField = document.getElementById('CPF');
         var cpfOriginal = cpfField.value;
         var cpfLimpo = cpfField.value.replace(/\D/g, "");
-        
-        console.log('CPF antes da limpeza:', cpfOriginal);
-        console.log('CPF após limpeza:', cpfLimpo);
-        console.log('Comprimento do CPF limpo:', cpfLimpo.length);
         
         cpfField.value = cpfLimpo;
     });
