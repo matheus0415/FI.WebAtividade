@@ -1,18 +1,24 @@
 ﻿
 <form id="formCadastro" method="post">
     <div class="row">
-        <div class="col-md-12">
+        <div class="col-md-6">
             <div class="form-group">
                 <label for="Nome">Nome:</label>
                 <input required="required" type="text" class="form-control" id="Nome" name="Nome" placeholder="Ex.: João" maxlength="50">
+            </div>
+        </div>
+         <div class="col-md-6">
+            <div class="form-group">
+                <label for="Sobrenome">Sobrenome:</label>
+                <input required="required" type="text" class="form-control" id="Sobrenome" name="Sobrenome" placeholder="Ex.: da Silva" maxlength="255">
             </div>
         </div>
     </div>
     <div class="row">
         <div class="col-md-6">
             <div class="form-group">
-                <label for="Sobrenome">Sobrenome:</label>
-                <input required="required" type="text" class="form-control" id="Sobrenome" name="Sobrenome" placeholder="Ex.: da Silva" maxlength="255">
+                <label for="CPF">CPF:</label>
+                <input required="required" type="text" class="form-control" id="CPF" name="CPF" placeholder="Ex.: 010.011.111-00" maxlength="14" pattern="\d{3}\.\d{3}\.\d{3}-\d{2}" title="Digite um CPF válido no formato 000.000.000-00">
             </div>
         </div>
         <div class="col-md-6">
@@ -83,3 +89,32 @@
 
 
 </form>
+
+<script type="text/javascript">
+    // Máscara para CPF
+    function mascaraCPF(cpf) {
+        cpf = cpf.replace(/\D/g, "");
+        cpf = cpf.replace(/(\d{3})(\d)/, "$1.$2");
+        cpf = cpf.replace(/(\d{3})(\d)/, "$1.$2");
+        cpf = cpf.replace(/(\d{3})(\d{1,2})$/, "$1-$2");
+        return cpf;
+    }
+
+    // Aplica máscara no campo CPF
+    document.getElementById('CPF').addEventListener('input', function(e) {
+        e.target.value = mascaraCPF(e.target.value);
+    });
+
+    // Remove máscara antes de enviar o formulário
+    document.getElementById('formCadastro').addEventListener('submit', function(e) {
+        var cpfField = document.getElementById('CPF');
+        var cpfOriginal = cpfField.value;
+        var cpfLimpo = cpfField.value.replace(/\D/g, "");
+        
+        console.log('CPF antes da limpeza:', cpfOriginal);
+        console.log('CPF após limpeza:', cpfLimpo);
+        console.log('Comprimento do CPF limpo:', cpfLimpo.length);
+        
+        cpfField.value = cpfLimpo;
+    });
+</script>
