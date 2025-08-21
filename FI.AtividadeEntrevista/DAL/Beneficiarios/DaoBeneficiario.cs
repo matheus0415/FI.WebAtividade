@@ -23,6 +23,7 @@ namespace FI.AtividadeEntrevista.DAL
             parametros.Add(new System.Data.SqlClient.SqlParameter("IDCLIENTE", beneficiario.ClienteId));
             parametros.Add(new System.Data.SqlClient.SqlParameter("CPF", beneficiario.CPF));
             parametros.Add(new System.Data.SqlClient.SqlParameter("NOME", beneficiario.Nome));
+            parametros.Add(new System.Data.SqlClient.SqlParameter("DELETIONDATE", beneficiario.DeletionDate));
 
             DataSet ds = base.Consultar("FI_SP_IncBeneficiario", parametros);
             long ret = 0;
@@ -55,7 +56,7 @@ namespace FI.AtividadeEntrevista.DAL
         {
             List<System.Data.SqlClient.SqlParameter> parametros = new List<System.Data.SqlClient.SqlParameter>();
 
-            parametros.Add(new System.Data.SqlClient.SqlParameter("ClienteId", clienteId));
+            parametros.Add(new System.Data.SqlClient.SqlParameter("IDCLIENTE", clienteId));
 
             DataSet ds = base.Consultar("FI_SP_ListBeneficiariosPorCliente", parametros);
             List<DML.Beneficiario> beneficiarios = Converter(ds);
@@ -94,8 +95,9 @@ namespace FI.AtividadeEntrevista.DAL
             parametros.Add(new System.Data.SqlClient.SqlParameter("IDCLIENTE", beneficiario.ClienteId));
             parametros.Add(new System.Data.SqlClient.SqlParameter("CPF", beneficiario.CPF));
             parametros.Add(new System.Data.SqlClient.SqlParameter("NOME", beneficiario.Nome));
+            parametros.Add(new System.Data.SqlClient.SqlParameter("DELETIONDATE", beneficiario.DeletionDate));
 
-            base.Executar("FI_SP_AltBeneficiario", parametros);
+            base.Executar("FI_SP_AltBenef", parametros);
         }
 
         /// <summary>
@@ -140,6 +142,7 @@ namespace FI.AtividadeEntrevista.DAL
                     beneficiario.ClienteId = row.Field<long>("IDCLIENTE"); // Corrigido para usar o nome da coluna do banco
                     beneficiario.CPF = row.Field<string>("CPF");
                     beneficiario.Nome = row.Field<string>("Nome");
+                    beneficiario.DeletionDate = row.Field<DateTime?>("DELETIONDATE");
                     lista.Add(beneficiario);
                 }
             }

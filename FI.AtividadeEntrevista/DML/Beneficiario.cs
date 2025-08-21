@@ -30,5 +30,10 @@ namespace FI.AtividadeEntrevista.DML
         /// Nome
         /// </summary>
         public string Nome { get; set; }
+
+        /// <summary>
+        /// Data de exclusão lógica do beneficiário
+        /// </summary>
+        public DateTime? DeletionDate { get; set; }
     }
 }

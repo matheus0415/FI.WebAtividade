@@ -32,5 +32,10 @@ namespace WebAtividadeEntrevista.Models
         [Required(ErrorMessage = "Nome é obrigatório")]
         [StringLength(100, MinimumLength = 2, ErrorMessage = "Nome deve ter entre 2 e 100 caracteres")]
         public string Nome { get; set; }
+
+        /// <summary>
+        /// Data de exclusão lógica do beneficiário
+        /// </summary>
+        public DateTime? DeletionDate { get; set; }
     }
 }
