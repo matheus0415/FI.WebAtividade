@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using System.Data.SqlClient;
 
 namespace FI.AtividadeEntrevista.DAL
 {
@@ -144,6 +145,39 @@ namespace FI.AtividadeEntrevista.DAL
             }
 
             return lista;
+        }
+
+        /// <summary>
+        /// Salva múltiplos beneficiários para um cliente
+        /// </summary>
+        /// <param name="clienteId">ID do cliente</param>
+        /// <param name="beneficiarios">Lista de beneficiários</param>
+        internal void SalvarBeneficiarios(long clienteId, List<Beneficiario> beneficiarios)
+        {
+            if (beneficiarios != null && beneficiarios.Count > 0)
+            {
+                foreach (var beneficiario in beneficiarios)
+                {
+                    if (!string.IsNullOrEmpty(beneficiario.CPF) && !string.IsNullOrEmpty(beneficiario.Nome))
+                    {
+                        SalvarBeneficiarioIndividual(clienteId, beneficiario.CPF, beneficiario.Nome);
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Salva um beneficiário individual usando o padrão AcessoDados
+        /// </summary>
+        private void SalvarBeneficiarioIndividual(long clienteId, string cpf, string nome)
+        {
+            List<SqlParameter> parametros = new List<SqlParameter>();
+            
+            parametros.Add(new SqlParameter("@IDCLIENTE", clienteId));
+            parametros.Add(new SqlParameter("@CPF", cpf));
+            parametros.Add(new SqlParameter("@NOME", nome));
+
+            base.Executar("FI_SP_IncBeneficiario", parametros);
         }
     }
 }

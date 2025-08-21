@@ -63,6 +63,19 @@ namespace WebAtividadeEntrevista.Controllers
                     Sobrenome = model.Sobrenome,
                     Telefone = model.Telefone
                 });
+
+                if (model.Beneficiarios != null && model.Beneficiarios.Count > 0)
+                {
+                    List<FI.AtividadeEntrevista.DML.Beneficiario> beneficiariosParaSalvar = model.Beneficiarios.Select(b => new FI.AtividadeEntrevista.DML.Beneficiario
+                    { 
+                        CPF = b.CPF, 
+                        Nome = b.Nome,
+                        ClienteId = model.Id
+                    }).ToList();
+                    
+                    bo.SalvarBeneficiarios(model.Id, beneficiariosParaSalvar);
+                }
+
                 return Json("Cadastro efetuado com sucesso");
             }
         }
