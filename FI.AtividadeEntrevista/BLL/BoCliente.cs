@@ -90,5 +90,16 @@ namespace FI.AtividadeEntrevista.BLL
             DAL.DaoBeneficiario dao = new DAL.DaoBeneficiario();
             dao.SalvarBeneficiarios(clienteId, beneficiarios);
         }
+
+        /// <summary>
+        /// Lista os beneficiários de um cliente
+        /// </summary>
+        /// <param name="clienteId">ID do cliente</param>
+        /// <returns>Lista de beneficiários</returns>
+        public List<Beneficiario> ListarBeneficiarios(long clienteId)
+        {
+            DAL.DaoBeneficiario dao = new DAL.DaoBeneficiario();
+            return dao.ListarPorCliente(clienteId);
+        }
     }
 }

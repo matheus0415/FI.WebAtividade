@@ -116,6 +116,19 @@ namespace WebAtividadeEntrevista.Controllers
                     Sobrenome = model.Sobrenome,
                     Telefone = model.Telefone
                 });
+
+                if (model.Beneficiarios != null)
+                {
+                    List<FI.AtividadeEntrevista.DML.Beneficiario> beneficiariosParaSalvar = model.Beneficiarios.Select(b => new FI.AtividadeEntrevista.DML.Beneficiario
+                    { 
+                        CPF = b.CPF, 
+                        Nome = b.Nome,
+                        ClienteId = model.Id
+                    }).ToList();
+                    
+                    bo.SalvarBeneficiarios(model.Id, beneficiariosParaSalvar);
+                }
+
                 return Json("Cadastro alterado com sucesso");
             }
         }
@@ -129,6 +142,8 @@ namespace WebAtividadeEntrevista.Controllers
 
             if (cliente != null)
             {
+                var beneficiarios = bo.ListarBeneficiarios(id);
+                
                 model = new ClienteModel()
                 {
                     Id = cliente.Id,
@@ -141,7 +156,12 @@ namespace WebAtividadeEntrevista.Controllers
                     Nacionalidade = cliente.Nacionalidade,
                     Nome = cliente.Nome,
                     Sobrenome = cliente.Sobrenome,
-                    Telefone = cliente.Telefone
+                    Telefone = cliente.Telefone,
+                    Beneficiarios = beneficiarios.Select(b => new BeneficiarioModel
+                    {
+                        CPF = b.CPF,
+                        Nome = b.Nome
+                    }).ToList()
                 };
             }
 
@@ -172,6 +192,27 @@ namespace WebAtividadeEntrevista.Controllers
             catch (Exception ex)
             {
                 return Json(new { Result = "ERROR", Message = ex.Message });
+            }
+        }
+
+        [HttpGet]
+        public JsonResult BuscarBeneficiarios(long clienteId)
+        {
+            try
+            {
+                BoCliente bo = new BoCliente();
+                var beneficiarios = bo.ListarBeneficiarios(clienteId);
+                
+                var resultado = beneficiarios.Select(b => new { 
+                    CPF = b.CPF, 
+                    Nome = b.Nome 
+                }).ToList();
+                
+                return Json(resultado, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                return Json(new { erro = ex.Message }, JsonRequestBehavior.AllowGet);
             }
         }
     }

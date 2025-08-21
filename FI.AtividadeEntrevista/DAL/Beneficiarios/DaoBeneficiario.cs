@@ -20,9 +20,9 @@ namespace FI.AtividadeEntrevista.DAL
         {
             List<System.Data.SqlClient.SqlParameter> parametros = new List<System.Data.SqlClient.SqlParameter>();
 
-            parametros.Add(new System.Data.SqlClient.SqlParameter("ClienteId", beneficiario.ClienteId));
+            parametros.Add(new System.Data.SqlClient.SqlParameter("IDCLIENTE", beneficiario.ClienteId));
             parametros.Add(new System.Data.SqlClient.SqlParameter("CPF", beneficiario.CPF));
-            parametros.Add(new System.Data.SqlClient.SqlParameter("Nome", beneficiario.Nome));
+            parametros.Add(new System.Data.SqlClient.SqlParameter("NOME", beneficiario.Nome));
 
             DataSet ds = base.Consultar("FI_SP_IncBeneficiario", parametros);
             long ret = 0;
@@ -74,7 +74,7 @@ namespace FI.AtividadeEntrevista.DAL
             List<System.Data.SqlClient.SqlParameter> parametros = new List<System.Data.SqlClient.SqlParameter>();
 
             parametros.Add(new System.Data.SqlClient.SqlParameter("CPF", cpf));
-            parametros.Add(new System.Data.SqlClient.SqlParameter("ClienteId", clienteId));
+            parametros.Add(new System.Data.SqlClient.SqlParameter("IDCLIENTE", clienteId));
             parametros.Add(new System.Data.SqlClient.SqlParameter("BeneficiarioId", beneficiarioId));
 
             DataSet ds = base.Consultar("FI_SP_VerificaCPFBeneficiario", parametros);
@@ -91,9 +91,9 @@ namespace FI.AtividadeEntrevista.DAL
             List<System.Data.SqlClient.SqlParameter> parametros = new List<System.Data.SqlClient.SqlParameter>();
 
             parametros.Add(new System.Data.SqlClient.SqlParameter("Id", beneficiario.Id));
-            parametros.Add(new System.Data.SqlClient.SqlParameter("ClienteId", beneficiario.ClienteId));
+            parametros.Add(new System.Data.SqlClient.SqlParameter("IDCLIENTE", beneficiario.ClienteId));
             parametros.Add(new System.Data.SqlClient.SqlParameter("CPF", beneficiario.CPF));
-            parametros.Add(new System.Data.SqlClient.SqlParameter("Nome", beneficiario.Nome));
+            parametros.Add(new System.Data.SqlClient.SqlParameter("NOME", beneficiario.Nome));
 
             base.Executar("FI_SP_AltBeneficiario", parametros);
         }
@@ -119,7 +119,7 @@ namespace FI.AtividadeEntrevista.DAL
         {
             List<System.Data.SqlClient.SqlParameter> parametros = new List<System.Data.SqlClient.SqlParameter>();
 
-            parametros.Add(new System.Data.SqlClient.SqlParameter("ClienteId", clienteId));
+            parametros.Add(new System.Data.SqlClient.SqlParameter("IDCLIENTE", clienteId));
 
             base.Executar("FI_SP_DelBeneficiariosPorCliente", parametros);
         }
@@ -137,7 +137,7 @@ namespace FI.AtividadeEntrevista.DAL
                 {
                     DML.Beneficiario beneficiario = new DML.Beneficiario();
                     beneficiario.Id = row.Field<long>("Id");
-                    beneficiario.ClienteId = row.Field<long>("ClienteId");
+                    beneficiario.ClienteId = row.Field<long>("IDCLIENTE"); // Corrigido para usar o nome da coluna do banco
                     beneficiario.CPF = row.Field<string>("CPF");
                     beneficiario.Nome = row.Field<string>("Nome");
                     lista.Add(beneficiario);
@@ -173,9 +173,9 @@ namespace FI.AtividadeEntrevista.DAL
         {
             List<SqlParameter> parametros = new List<SqlParameter>();
             
-            parametros.Add(new SqlParameter("@IDCLIENTE", clienteId));
-            parametros.Add(new SqlParameter("@CPF", cpf));
-            parametros.Add(new SqlParameter("@NOME", nome));
+            parametros.Add(new SqlParameter("IDCLIENTE", clienteId));
+            parametros.Add(new SqlParameter("CPF", cpf));
+            parametros.Add(new SqlParameter("NOME", nome));
 
             base.Executar("FI_SP_IncBeneficiario", parametros);
         }

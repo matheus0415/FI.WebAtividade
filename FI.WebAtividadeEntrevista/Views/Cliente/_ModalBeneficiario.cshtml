@@ -1,4 +1,4 @@
-<!-- Modal para Gerenciar Benefici&aacute;rios -->
+
 <div class="modal fade" id="modalBeneficiario" tabindex="-1" role="dialog" aria-labelledby="modalBeneficiarioLabel">
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
@@ -9,7 +9,6 @@
                 <h4 class="modal-title" id="modalBeneficiarioLabel">Benefici&aacute;rios</h4>
             </div>
             <div class="modal-body">
-                <!-- Formul&aacute;rio para adicionar benefici&aacute;rio -->
                 <div class="row">
                     <div class="col-md-4">
                         <div class="form-group">
@@ -28,6 +27,7 @@
                             <label>&nbsp;</label>
                             <div>
                                 <button type="button" class="btn btn-success btn-sm" id="btnIncluirBeneficiario">Incluir</button>
+                                <button type="button" class="btn btn-default btn-sm" id="btnCancelarBeneficiario" style="display: none; margin-left: 5px;">Cancelar</button>
                             </div>
                         </div>
                     </div>
@@ -35,7 +35,6 @@
 
                 <hr>
 
-                <!-- Tabela de benefici&aacute;rios -->
                 <div class="table-responsive">
                     <table class="table table-striped table-hover">
                         <thead>
@@ -46,12 +45,10 @@
                             </tr>
                         </thead>
                         <tbody id="tabelaBeneficiarios">
-                            <!-- Benefici&aacute;rios ser&atilde;o adicionados aqui dinamicamente -->
                         </tbody>
                     </table>
                 </div>
 
-                <!-- Mensagem quando não há beneficiários -->
                 <div id="msgSemBeneficiarios" class="text-center text-muted" style="padding: 20px;">
                     <i class="glyphicon glyphicon-info-sign"></i> Nenhum benefici&aacute;rio cadastrado
                 </div>
@@ -101,20 +98,31 @@
             return;
         }
         
-        contadorBeneficiarios++;
+        var btnIncluir = document.getElementById('btnIncluirBeneficiario');
+        var editingId = btnIncluir ? btnIncluir.getAttribute('data-editing-id') : null;
+        
         var beneficiario = {
-            id: contadorBeneficiarios,
+            id: editingId ? parseInt(editingId) : ++contadorBeneficiarios,
             cpf: cpf,
             cpfLimpo: cpfLimpo,
             nome: nome
         };
         
-        beneficiarios.push(beneficiario);
-        atualizarTabelaBeneficiarios();
+        if (editingId) {
+            var index = beneficiarios.findIndex(b => b.id === parseInt(editingId));
+            if (index !== -1) {
+                beneficiarios[index] = beneficiario;
+            } else {
+                beneficiarios.push(beneficiario);
+            }
+        } else {
+            
+            beneficiarios.push(beneficiario);
+        }
         
-        if (cpfInput) cpfInput.value = '';
-        if (nomeInput) nomeInput.value = '';
-        if (cpfInput) cpfInput.focus();
+        window.beneficiarios = beneficiarios;
+        atualizarTabelaBeneficiarios();
+        limparFormularioBeneficiario();
     }
 
     function atualizarTabelaBeneficiarios() {
@@ -204,6 +212,13 @@
             });
         }
 
+        var btnCancelar = document.getElementById('btnCancelarBeneficiario');
+        if (btnCancelar) {
+            btnCancelar.addEventListener('click', function() {
+                limparFormularioBeneficiario();
+            });
+        }
+
         if (cpfInput) {
             cpfInput.addEventListener('keypress', function(e) {
                 if (e.which === 13 || e.keyCode === 13) {
@@ -224,15 +239,109 @@
         atualizarTabelaBeneficiarios();
     });
 
+    function alterarBeneficiario(id) {
+        var beneficiario = beneficiarios.find(b => b.id === id);
+        if (beneficiario) {
+            var cpfInput = document.getElementById('modalCPFBeneficiario');
+            var nomeInput = document.getElementById('modalNomeBeneficiario');
+            var btnIncluir = document.getElementById('btnIncluirBeneficiario');
+            var btnCancelar = document.getElementById('btnCancelarBeneficiario');
+            
+            if (cpfInput) cpfInput.value = beneficiario.cpf;
+            if (nomeInput) nomeInput.value = beneficiario.nome;
+            
+           
+            if (btnIncluir) {
+                btnIncluir.textContent = 'Salvar';
+                btnIncluir.className = 'btn btn-warning btn-sm';
+                btnIncluir.setAttribute('data-editing-id', id);
+            }
+            
+        
+            if (btnCancelar) {
+                btnCancelar.style.display = 'inline-block';
+            }
+            
+            if (cpfInput) cpfInput.focus();
+        }
+    }
+
+    function excluirBeneficiario(id) {
+        if (confirm('Tem certeza que deseja excluir este beneficiário?')) {
+            beneficiarios = beneficiarios.filter(b => b.id !== id);
+            window.beneficiarios = beneficiarios;
+            atualizarTabelaBeneficiarios();
+        }
+    }
+
+    function limparFormularioBeneficiario() {
+        var cpfInput = document.getElementById('modalCPFBeneficiario');
+        var nomeInput = document.getElementById('modalNomeBeneficiario');
+        var btnIncluir = document.getElementById('btnIncluirBeneficiario');
+        var btnCancelar = document.getElementById('btnCancelarBeneficiario');
+        
+        if (cpfInput) cpfInput.value = '';
+        if (nomeInput) nomeInput.value = '';
+        
+        if (btnIncluir) {
+            btnIncluir.textContent = 'Incluir';
+            btnIncluir.className = 'btn btn-success btn-sm';
+            btnIncluir.removeAttribute('data-editing-id');
+        }
+        
+        if (btnCancelar) {
+            btnCancelar.style.display = 'none';
+        }
+        
+        if (cpfInput) cpfInput.focus();
+    }
+
     function aguardarJQuery() {
         if (typeof jQuery !== 'undefined') {
             jQuery('#modalBeneficiario').on('shown.bs.modal', function() {
-                atualizarTabelaBeneficiarios();
+                carregarBeneficiariosExistentes();
                 var cpfInput = document.getElementById('modalCPFBeneficiario');
                 if (cpfInput) cpfInput.focus();
             });
         } else {
             setTimeout(aguardarJQuery, 100);
+        }
+    }
+
+    function carregarBeneficiariosExistentes() {
+        
+        if (typeof obj !== 'undefined' && obj && obj.Id) {
+            $.ajax({
+                url: '@Url.Action("BuscarBeneficiarios", "Cliente")',
+                method: "GET",
+                data: { clienteId: obj.Id },
+                success: function(data) {
+                    if (data && !data.erro) {
+                        
+                        beneficiarios = [];
+                        
+                        
+                        for (var i = 0; i < data.length; i++) {
+                            var cpfFormatado = mascaraCPFBeneficiario(data[i].CPF);
+                            beneficiarios.push({
+                                id: contadorBeneficiarios++,
+                                cpf: cpfFormatado,
+                                cpfLimpo: data[i].CPF.replace(/\D/g, ""),
+                                nome: data[i].Nome
+                            });
+                        }
+                        
+                        // Atualizar a tabela
+                        atualizarTabelaBeneficiarios();
+                    }
+                },
+                error: function() {
+                    console.log('Erro ao carregar beneficiários existentes');
+                    atualizarTabelaBeneficiarios();
+                }
+            });
+        } else {
+            atualizarTabelaBeneficiarios();
         }
     }
     
